@@ -1,0 +1,1 @@
+echo hello from drop_db.sh
