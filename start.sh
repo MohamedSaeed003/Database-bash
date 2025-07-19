@@ -17,8 +17,7 @@ do
             . ./drop_db.sh
             ;;
         "Exit")
-            echo "Exiting..."
-            exit 0
+            break
             ;;
         *)
             echo "Invalid option. Please try again."
@@ -28,4 +27,3 @@ do
     echo "Select another option:"
 done
 echo "Exiting..."
-exit 0
