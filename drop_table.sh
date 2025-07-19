@@ -1,3 +1,9 @@
 #! /user/bin/bash
 
-echo "hello from drop_table.sh"
+read -p "enter tabel name to remove " rm_table
+
+cd Databases/$db_name
+rm $rm_table
+rm .$rm_table
+
+ls -a
