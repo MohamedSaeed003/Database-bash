@@ -1,1 +1,7 @@
-echo hello from list_db.sh
+#!/bin/bash
+echo "Listing all databases:"
+cd Databases
+
+ls -F | grep '/' | sed 's/\/$//'
+cd ..
+echo "End of database list."
