@@ -9,7 +9,7 @@ then
     exit 1
 fi
 
-read -p "enter your column number: " col_numbers
+read -p "enter how many columns: " col_numbers
 
 columns_line=""
 
@@ -21,7 +21,25 @@ pk_set=0
 for (( i=1; i<=col_numbers; i++ ))
 do
     read -p "enter column $i name: " col_name
-    read -p "enter column $i data type (int or string only): " col_type
+
+    select col_type in "int" "string"
+    do
+       echo please enter column $i data type:
+       case $col_type in
+        int)
+            col_type="int"
+            break
+            ;;
+        string)
+            col_type="string"
+            break
+            ;;
+        *)
+            echo "Invalid option. Please select 'int' or 'string'."
+            continue
+            ;;
+        esac    
+    done
 
     pk=""
     if [[ $pk_set -eq 0 ]]; then
@@ -50,9 +68,6 @@ if [[ $pk_set -eq 0 ]]; then
     return
 fi
 
-# Create the table file with column names in the first line (colon-separated)
 echo "$columns_line" > "$table_name"
+echo "Table '$table_name' has been created successfully with primary key defined."
 cd ..; cd ..
-
-# The table file is now ready for data insertion.
-# Each subsequent line will be added by your insert script, containing row data (colon-separated).

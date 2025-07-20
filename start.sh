@@ -1,29 +1,51 @@
 #! /usr/bin/bash
 
-options=("Create a new Database" "List all Databases" "Connect to a Database" "Drop a Database" "Exit")
+print_separator() {
+    echo "----------------------------------"
+}
+
+PS3="Please select an option: "
+echo "Welcome to the Database Management System"
+print_separator
+
+options=("Press 1 to Create a new Database" "Press 2 to List all Databases" "Press 3 to Connect to a Database" "Press 4 to Drop a Database" "Press 5 to Exit")
+
+print_options(){
+    for option in "${options[@]}"; do
+        echo "$option"
+    done
+}
+
 select option in "${options[@]}"
 do
-    case $option in
-        "Create a new Database")
+    case $REPLY in
+        1)
            . ./create_db.sh
+            print_separator
+            print_options
             ;;
-        "List all Databases")
+        2)
             . ./list_db.sh
+            print_separator
+            print_options
             ;;
-        "Connect to a Database")
+        3)
             . ./connect_db.sh
+            print_separator
+            print_options
             ;;
-        "Drop a Database")
+        4)
             . ./drop_db.sh
+            print_separator
+            print_options
             ;;
-        "Exit")
+       5)
+            echo "Exiting the Database Management System..."
             break
             ;;
         *)
             echo "Invalid option. Please try again."
             ;;
     esac
-    echo "----------------------------------"
-    echo "Select another option:"
+    print_separator
 done
-echo "Exiting..."
