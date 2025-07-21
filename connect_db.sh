@@ -67,4 +67,5 @@ if [ -d "$db_name" ]; then
     done
 else
     echo "there is no such database '$db_name'."
+    cd ..
 fi
