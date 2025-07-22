@@ -25,7 +25,7 @@ if [ -f "$table_name" ]; then
         col_name="${column_names[$i]}"
         col_type="${column_types[$i]}"
         while true; do
-            read -p "Enter value for column '$col_name' (type: $col_type): " value
+            read -r -p "Enter value for column '$col_name' (type: $col_type): " value
             if [[ "$col_name" == "$primary_key" ]]; then
                 
                 pk_index=$(awk -F: -v pk="$primary_key" 'NR==1 {for(i=1;i<=NF;i++) if($i==pk) print i}' "$table_name")
