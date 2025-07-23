@@ -24,36 +24,43 @@ if [ -d "$db_name" ]; then
                 . ./create_table.sh
                 print_separator
                 print_db_options
+                print_separator
                 ;;
             2)
                 . ./list_tables.sh
                 print_separator
                 print_db_options
+                print_separator
                 ;;
             3)
                 . ./drop_table.sh
                 print_separator
                 print_db_options
+                print_separator
                 ;;
             4)
                 . ./insert_data.sh
                 print_separator
                 print_db_options
+                print_separator
                 ;;
             5)
                 . ./select_data.sh
                 print_separator
                 print_db_options
+                print_separator
                 ;;
             6)
                 . ./delete_data.sh
                 print_separator
                 print_db_options
+                print_separator
                 ;;
             7)
                 . ./update_table.sh
                 print_separator
                 print_db_options
+                print_separator
                 ;;
             8)
                 echo "Exiting from database $db_name..."
@@ -62,8 +69,7 @@ if [ -d "$db_name" ]; then
             *)
                 echo "Invalid option. Please try again."
                 ;;
-    esac
-        print_separator
+        esac
     done
 else
     echo "there is no such database '$db_name'."
