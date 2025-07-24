@@ -10,13 +10,11 @@ if [ -f "$table_name" ]; then
     for (( i=1; i<=number_of_columns; i++ ))
     do
         column_names[$i]=$(awk -F: -v col="$i" '{if (NR == col) print $2}' .$table_name.meta_data)
-        echo "Column $i: ${column_names[$i]}"
+
         column_types[$i]=$(awk -F: -v col="$i" '{if (NR == col) print $3}' .$table_name.meta_data)
-        echo "Type of column $i: ${column_types[$i]}"
     done
 
     primary_key=$(awk -F: '{if ($1 == "PK") print $2}' .$table_name.meta_data)
-    echo "Primary key for the table: $primary_key"
 
     declare -a row_values
 
@@ -37,11 +35,22 @@ if [ -f "$table_name" ]; then
                 fi
             fi
             if [[ "$col_type" == "int" ]]; then
-                if [[ "$value" =~ ^-?[0-9]+$ ]]; then
-                    row_values[$i]="$value"
-                    break
+                if [[ "$col_name" == "$primary_key" ]]; then
+
+                    if [[ "$value" =~ ^[0-9]+$ ]]; then
+                        row_values[$i]="$value"
+                        break
+                    else
+                        echo "Invalid input. Primary key must be a non-negative integer."
+                    fi
                 else
-                    echo "Invalid input. Please enter an integer."
+
+                    if [[ "$value" =~ ^-?[0-9]+$ ]]; then
+                        row_values[$i]="$value"
+                        break
+                    else
+                        echo "Invalid input. Please enter an integer."
+                    fi
                 fi
             elif [[ "$col_type" == "string" ]]; then
                 if [[ "$value" =~ ^[a-zA-Z0-9_" "]+$ ]]; then

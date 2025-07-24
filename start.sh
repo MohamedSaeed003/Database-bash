@@ -23,21 +23,25 @@ do
            . ./create_db.sh
             print_separator
             print_options
+            print_separator
             ;;
         2)
             . ./list_db.sh
             print_separator
             print_options
+            print_separator
             ;;
         3)
             . ./connect_db.sh
             print_separator
             print_options
+            print_separator
             ;;
         4)
             . ./drop_db.sh
             print_separator
             print_options
+            print_separator
             ;;
        5)
             echo "Exiting the Database Management System..."
@@ -47,5 +51,4 @@ do
             echo "Invalid option. Please try again."
             ;;
     esac
-    print_separator
 done
