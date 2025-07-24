@@ -1,22 +1,121 @@
-#! /user/bin/bash
+#!/usr/bin/bash
 
+read -p "enter table name to update: " table_name
 
-read -p "enter table name need to update " table_name
-read -p "enter column name " search_col
-read -p "enter value to update it " search_val
-read -p "enter the new value " new_val
+cd Databases/"$db_name"
 
+if [[ -f "$table_name" ]]
+then
+    echo "table named '$table_name' is exist "
+else
+    echo "table named '$table_name' is not exist "
+    exit 1
+fi
 
-header=$(head -n 1 "$table_name")
-col_index=0
-index=1
+meta_file=".$table_name.meta_data"
+pk_name=$(grep '^PK:' "$meta_file" | cut -d':' -f2)    # get PK name from metadata
+header=($(head -1 "$table_name" | tr ':' ' '))
 
-for col in $(echo "$header")
+# get PK column index 
+for i in "${!header[@]}"
 do
-    if [ "$col" == "$search_col" ]
+    if [ "${header[$i]}" == "$pk_name" ]
     then
-        col_index=$index
+        pk_col=$((i + 1))
         break
     fi
-    index=$((index + 1))
 done
+    
+echo " "
+read -r -p "enter primary key value to update its row " pk_value
+# Search for the matching row
+matching_row=$(awk -F':' -v col="$pk_col" -v val="$pk_value" 'NR > 1 && $col == val { print $0; exit }' "$table_name")
+
+if [ -z "$matching_row" ]
+then
+    echo " "
+    echo "no row found with primary key = '$pk_value'"
+    exit 0
+fi
+
+echo " "
+read -r -p "enter column name needed to update: " column_to_update
+# Get column index to update
+update_col_index=-1
+for i in "${!header[@]}"
+do
+    if [ "${header[$i]}" == "$column_to_update" ]
+    then
+        update_col_index=$((i + 1))
+        break
+    fi
+done
+
+
+# Prevent updating PK or invalid column name
+if [ "$column_to_update" == "$pk_name" ]
+then
+    echo " "
+    echo "primary key column '$pk_name' cannot be updated"
+
+elif [ "$update_col_index" -eq -1 ]
+then
+    echo " "
+    echo "column '$column_to_update' is not exist"
+
+else
+
+    # Get expected data type
+expected_type=$(awk -F: -v col="$column_to_update" '
+    $2 == col { print $3; exit }
+    $1 == col { print $2; exit } 
+' "$meta_file")
+
+echo " "
+echo "expected data type is '$expected_type' "
+
+echo " "
+read -r -p "enter new value for '$column_to_update' " new_value
+
+if [[ "$expected_type" == "int" ]]
+then
+    if ! [[ "$new_value" =~ ^[0-9]+$ ]]
+    then
+        echo " "
+        echo "invalid input expected an integer."
+        exit 1
+    fi
+elif [[ "$expected_type" == "string" ]]
+then
+    if [[ "$new_value" =~ ^[0-9]+$ ]]
+    then
+        echo " "
+        echo "invalid input expected an string."
+        exit 1
+    fi
+    if [[ "$new_value" =~ [^a-zA-Z0-9_[:space:]] ]]
+    then
+        echo " "
+        echo "invalid input avoid using spaces & special characters use letters, numbers, _ & - only"
+        exit 1
+    fi
+else
+    echo " "
+    echo "unknown data type: $expected_type"
+    exit 1
+fi
+
+# Update the row
+temp_file=$(mktemp)
+awk -F':' -v pkcol="$pk_col" -v pk="$pk_value" -v col="$update_col_index" -v new="$new_value" 'BEGIN { OFS=":" }
+NR == 1 { print; next }
+$pkcol == pk { $col = new }
+{ print }
+' "$table_name" > "$temp_file" && mv "$temp_file" "$table_name"
+
+echo " "
+echo "row which $pk_name = '$pk_value' updated successfully "
+
+fi
+
+cd ..; cd ..
