@@ -1,7 +1,7 @@
 #!/user/bin/bash
 
 select_options=("Press 1 to Select all" "Press 2 to Select with condition" "Press 3 to Exit")
-condition_options=("Press 1 to Select where name is equal to a value" "Press 2 to Select where salary is greater than a value" "Press 3 to to Select where salary is less than a value" "Press 4 to Exit")
+condition_options=("Press 1 to Select where value is equal to a specific value" "Press 2 to Select where value is greater than a specific value" "Press 3 to Select where value is less than a specific value" "Press 4 to Exit")
 
 print_soptions() {
     echo "Select Options:"
@@ -47,7 +47,7 @@ if [[ -f $table_name ]]; then
     
     read -p "Do you want all columns? (y/n): " all_columns
 
-    if [[ $all_columns != "y" && $all_columns != "Y" ]]; then
+    if [[ $all_columns == "n" || $all_columns == "N" ]]; then
         echo "Available columns with indices:"
         for (( i=1; i<=number_of_columns; i++ ))
         do
@@ -79,10 +79,9 @@ if [[ -f $table_name ]]; then
             done
         done
     else
+        echo "Selecting all columns..."
         selected_columns=($(seq 1 $number_of_columns))
     fi
-
-    echo "You have selected the following columns: ${selected_columns[@]}"
 
     cut_selected_columns=$(IFS=, ; echo "${selected_columns[@]}")
 
@@ -103,17 +102,16 @@ if [[ -f $table_name ]]; then
                             read -p "Enter the name of column to filter by: " column_name
                             if [[ " ${column_names[@]} " =~ " ${column_name} " ]]; then
                                 get_column_index "$column_name"
-                                if [[ $col_index -eq -1 ]]; then
-                                    echo "Column '$column_name' does not exist in the table."
-                                    continue
+                            
+                                read -p "Enter the value to match: " value
+                                result=$(awk -F: -v col="$col_index" -v val="$value" 'NR==1 || $col==val' "$table_name")
+                                if [[ "$result" == "$(awk -F: 'NR==1' "$table_name")" ]]; then
+                                    echo "No matching records found."
+                                else
+                                    echo "$result" | cut -d: -f"$cut_selected_columns"
                                 fi
-                            fi
-                            read -p "Enter the value to match: " value
-                            result=$(awk -F: -v col="$col_index" -v val="$value" 'NR==1 || $col==val' "$table_name")
-                            if [[ "$result" == "$(awk -F: 'NR==1' "$table_name")" ]]; then
-                                echo "No matching records found."
                             else
-                                echo "$result" | cut -d: -f"$cut_selected_columns"
+                                echo "Column '$column_name' does not exist in the table."    
                             fi
                             print_separator
                             print_coptions
@@ -121,17 +119,23 @@ if [[ -f $table_name ]]; then
                             ;;
                         2)  read -p "Enter the name of column to filter by: " column_name
                 
+                            if [[ " ${column_names[@]} " =~ " ${column_name} " ]]; then
                                 get_column_index "$column_name"
-                                if [[ $col_index -eq -1 ]]; then
-                                    echo "Column '$column_name' does not exist in the table."
-                                    continue
-                                fi
-                                if [[ "${column_types[$col_index]}" != "int" ]]; then
+
+                                if [[ "${column_types[$col_index]}" == "int" ]]; then
+
+                                    read -p "Enter the minimum value: " min_value
+                                    if [[ $min_value =~ ^-?[0-9]+$ ]]; then
+                                        awk -F: -v col="$col_index" -v min="$min_value" 'NR==1 || $col > min' "$table_name"| cut -d: -f"$cut_selected_columns"
+                                    else
+                                        echo "Invalid input. Please enter an integer."
+                                    fi
+                                else
                                     echo "Cannot compare: Column '$column_name' is not of type int."
-                                    continue
                                 fi
-                            read -p "Enter the minimum value: " min_value
-                            awk -F: -v col="$col_index" -v min="$min_value" 'NR==1 || $col > min' "$table_name" | cut -d: -f"$cut_selected_columns"
+                            else
+                                echo "Column '$column_name' does not exist in the table."
+                            fi
                             print_separator
                             print_coptions
                             print_separator
@@ -139,17 +143,23 @@ if [[ -f $table_name ]]; then
                         3)
                             read -p "Enter the name of column to filter by: " column_name
                             
+                            if [[ " ${column_names[@]} " =~ " ${column_name} " ]]; then
                                 get_column_index "$column_name"
-                                if [[ $col_index -eq -1 ]]; then
-                                    echo "Column '$column_name' does not exist in the table."
-                                    continue
-                                fi
-                                if [[ "${column_types[$col_index]}" != "int" ]]; then
+
+                                if [[ "${column_types[$col_index]}" == "int" ]]; then
+                                    
+                                    read -p "Enter the maximum value: " max_value
+                                    if [[ $max_value =~ ^-?[0-9]+$ ]]; then
+                                        awk -F: -v col="$col_index" -v max="$max_value" 'NR==1 || $col < max' "$table_name"| cut -d: -f"$cut_selected_columns"
+                                    else
+                                        echo "Invalid input. Please enter an integer."
+                                    fi
+                                else
                                     echo "Cannot compare: Column '$column_name' is not of type int."
-                                    continue
                                 fi
-                            read -p "Enter the maximum value: " max_value
-                            awk -F: -v col="$col_index" -v max="$max_value" 'NR==1 || $col < max' "$table_name"| cut -d: -f"$cut_selected_columns"
+                            else
+                                echo "Column '$column_name' does not exist in the table."
+                            fi
                             print_separator
                             print_coptions
                             print_separator
