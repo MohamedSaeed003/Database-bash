@@ -1,16 +1,21 @@
 #!/usr/bin/bash
 
-read -p "enter table name to update: " table_name
-
 cd Databases/"$db_name"
 
-if [[ -f "$table_name" ]]
-then
-    echo "table named '$table_name' is exist "
-else
-    echo "table named '$table_name' is not exist "
-    exit 1
-fi
+while true
+do
+    read -p "enter table name to update: " table_name
+
+    if [[ -f "$table_name" ]]
+    then
+        echo "table named '$table_name' is exist "
+        break
+    else
+        echo "table named '$table_name' is not exist "
+        continue
+    fi
+
+done
 
 meta_file=".$table_name.meta_data"
 pk_name=$(grep '^PK:' "$meta_file" | cut -d':' -f2)    # get PK name from metadata
@@ -26,43 +31,52 @@ do
     fi
 done
     
-echo " "
-read -r -p "enter primary key value to update its row " pk_value
-# Search for the matching row
-matching_row=$(awk -F':' -v col="$pk_col" -v val="$pk_value" 'NR > 1 && $col == val { print $0; exit }' "$table_name")
-
-if [ -z "$matching_row" ]
-then
+ while true
+ do   
     echo " "
-    echo "no row found with primary key = '$pk_value'"
-    exit 0
-fi
+    read -r -p "enter primary key value to update its row " pk_value
+    # Search for the matching row
+    matching_row=$(awk -F':' -v col="$pk_col" -v val="$pk_value" 'NR > 1 && $col == val { print $0; exit }' "$table_name")
 
-echo " "
-read -r -p "enter column name needed to update: " column_to_update
-# Get column index to update
-update_col_index=-1
-for i in "${!header[@]}"
-do
-    if [ "${header[$i]}" == "$column_to_update" ]
+    if [ -z "$matching_row" ]
     then
-        update_col_index=$((i + 1))
+        echo " "
+        echo "no row found with primary key = '$pk_value'"
+        continue
+    else
         break
     fi
 done
 
+#-------------------------------------check col name to update----------------------------
+while true
+do
+
+    echo " "
+    read -r -p "enter column name needed to update: " column_to_update
+    # Get column index to update
+    update_col_index=-1
+    for i in "${!header[@]}"
+    do
+        if [ "${header[$i]}" == "$column_to_update" ]
+        then
+            update_col_index=$((i + 1))
+            break
+        fi
+    done
 
 # Prevent updating PK or invalid column name
 if [ "$column_to_update" == "$pk_name" ]
 then
     echo " "
     echo "primary key column '$pk_name' cannot be updated"
+    continue
 
 elif [ "$update_col_index" -eq -1 ]
 then
     echo " "
     echo "column '$column_to_update' is not exist"
-
+    continue
 else
 
     # Get expected data type
@@ -83,7 +97,7 @@ then
     then
         echo " "
         echo "invalid input expected an integer."
-        exit 1
+        continue
     fi
 elif [[ "$expected_type" == "string" ]]
 then
@@ -91,20 +105,16 @@ then
     then
         echo " "
         echo "invalid input expected an string."
-        exit 1
+        continue
     fi
     if [[ "$new_value" =~ [^a-zA-Z0-9_[:space:]] ]]
     then
         echo " "
         echo "invalid input avoid using spaces & special characters use letters, numbers, _ & - only"
-        exit 1
+        continue
     fi
-else
-    echo " "
-    echo "unknown data type: $expected_type"
-    exit 1
 fi
-
+echo " "
 # Update the row
 temp_file=$(mktemp)
 awk -F':' -v pkcol="$pk_col" -v pk="$pk_value" -v col="$update_col_index" -v new="$new_value" 'BEGIN { OFS=":" }
@@ -116,6 +126,10 @@ $pkcol == pk { $col = new }
 echo " "
 echo "row which $pk_name = '$pk_value' updated successfully "
 
+break
 fi
 
+done
 cd ..; cd ..
+
+ #  this comment is last thing            
