@@ -9,7 +9,7 @@ while true
 do
 
 read -r -p "enter your table name: " table_name
-
+table_name="${table_name,,}"  # Convert to lowercase
 if [ -z "$table_name" ]             
 then
     echo "invalid table name to be empty "
@@ -103,13 +103,14 @@ do
     do
 
     read -r -p "enter column $i name: " col_name
+col_name="${col_name,,}"  # Convert to lowercase
 
 if [ -z "$col_name" ]             
 then
     echo "invalid column name to be empty "
     continue
 
-elif [[ "$col_name" == *"/"* || "$col_name" == *'\'* || "$table_name" == *"-"* ]]  
+elif [[ "$col_name" == *"/"* || "$col_name" == *'\'* || "$col_name" == *"-"* ]]  
 then
     echo "invalid column name cannot contain '/' or '\' or '-' use _ instead "
     continue
@@ -178,7 +179,6 @@ done
 
             read -r -p "is column '$col_name' the primary key ? (yes/no)  " is_pk
             is_pk_lower=$(echo "$is_pk" | tr '[:upper:]' '[:lower:]')  # tr to normalize input
-
             if [[ "$is_pk_lower" == "yes" || "$is_pk_lower" == "y" ]]
             then
                 pk="PK"
