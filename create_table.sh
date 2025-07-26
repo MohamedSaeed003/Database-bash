@@ -124,7 +124,7 @@ then
     echo "table column '$col_name' already exists "
     continue
 
-elif [[ "$col_name" =~ ^[0-9]]]
+elif [[ "$col_name" =~ ^[0-9] ]]
 then
     echo "invalid column name cannot start with numbers "        
     continue
