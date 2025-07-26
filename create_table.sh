@@ -15,14 +15,14 @@ then
     echo "invalid table name to be empty "
     continue
 
-elif [[ "$table_name" == *"/"* || "$table_name" == *'\'* ]]  
+elif [[ "$table_name" == *"/"* || "$table_name" == *'\'* || "$table_name" == *"-"* ]]  
 then
-    echo "invalid table name cannot contain '/' or '\' use _ & - instead "
+    echo "invalid table name cannot contain '/' or '\' or '-' use _ instead "
     continue
 
 elif  echo "$table_name" | grep -qE '[_-]{2,}'  
 then
-    echo "invalid table name contain 2 or more consecutive of _ & -" 
+    echo "invalid table name contain 2 or more consecutive of _ " 
     continue
 
 elif [ -f "$table_name" ]
@@ -30,9 +30,9 @@ then
     echo "table named '$table_name' already exists " 
     continue
 
-elif [[ "$table_name" =~ ^[0-9]+$ ]]
+elif [[ "$table_name" =~ ^[0-9] ]]
 then
-    echo "invalid table name cannot be only numbers "        
+    echo "invalid table name cannot start with numbers "        
     continue
 
 elif ! [[ "$table_name" =~ [a-zA-Z] ]]
@@ -42,7 +42,7 @@ then
 
 elif [[ "$table_name" =~ [^a-zA-Z0-9_-] ]]
 then
-    echo "avoid using spaces & special characters use letters, numbers, _ & - only "
+    echo "avoid using spaces & special characters use letters, numbers, _ only "
     continue
 
 else
@@ -109,9 +109,9 @@ then
     echo "invalid column name to be empty "
     continue
 
-elif [[ "$col_name" == *"/"* || "$col_name" == *'\'* ]]  
+elif [[ "$col_name" == *"/"* || "$col_name" == *'\'* || "$table_name" == *"-"* ]]  
 then
-    echo "invalid column name cannot contain '/' or '\' use _ & - instead "
+    echo "invalid column name cannot contain '/' or '\' or '-' use _ instead "
     continue
 
 elif  echo "$col_name" | grep -qE '[_-]{2,}'  
@@ -124,9 +124,9 @@ then
     echo "table column '$col_name' already exists "
     continue
 
-elif [[ "$col_name" =~ ^[0-9]+$ ]]
+elif [[ "$col_name" =~ ^[0-9]]]
 then
-    echo "invalid column name cannot be only numbers "        
+    echo "invalid column name cannot start with numbers "        
     continue
 
 elif ! [[ "$col_name" =~ [a-zA-Z] ]]
@@ -136,7 +136,7 @@ then
 
 elif [[ "$col_name" =~ [^a-zA-Z0-9_-] ]]
 then
-    echo "avoid using spaces & special characters use letters, numbers, _ & - only "
+    echo "avoid using spaces & special characters use letters, numbers, _ only "
     continue
 
 else
@@ -216,8 +216,8 @@ then
 fi
 
 echo "$columns_line" > "$table_name"
-echo "table '$table_name' has been created successfully with primary key '$table_name' "
+echo "table '$table_name' has been created successfully "
 cd ..; cd ..
 
 
- #  this comment is last thing        
+ #  this comment is last thing           
