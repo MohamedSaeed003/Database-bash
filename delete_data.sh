@@ -4,7 +4,7 @@ cd Databases/"$db_name"
 
 while true
 do
-read -r -p "Enter the name of the table to delete from: " table_name
+read -r -p "enter the name of the table to delete from: " table_name
 
 
 meta_file=".$table_name.meta_data"
@@ -20,46 +20,69 @@ fi
 
 done
 
-pk_name=$(grep '^PK:' "$meta_file" | cut -d':' -f2)  # get PK column name from metadata
-
-# find the column number of PK in header of the table
-pk_col=$(head -1 "$table_name" | awk -F':' -v pk="$pk_name" '
-{
-    for (i=1; i<=NF; i++) {
-        if ($i == pk) {
-            print i;
-            exit;
-        }
-    }
-}')
-
-if [ -z "$pk_col" ]
-then
-    echo "primary key column '$pk_name' is not found in table "
-fi
-
-while true
+echo "select an option:"
+select option in "delete by primary key" "delete all rows except header" "exit"
 do
+    case $REPLY in
 
-read -r -p "enter the primary key value to delete: " id_to_delete
+ 1 )
+    pk_name=$(grep '^PK:' "$meta_file" | cut -d':' -f2)  # get PK column name from metadata
 
-found=$(awk -F':' -v col="$pk_col" -v val="$id_to_delete" 'NR > 1 && $col == val { found=1 } END { print found }' "$table_name")
+    # find the column number of PK in header of the table
+    pk_col=$(head -1 "$table_name" | awk -F':' -v pk="$pk_name" '
+    {
+        for (i=1; i<=NF; i++) {
+            if ($i == pk) {
+                print i;
+                exit;
+            }
+        }
+    }')
 
-if [ "$found" != "1" ]
-then
-    echo "no row found with primary key '$id_to_delete' in table"
-    continue
-else
-    break    
-fi
+    if [ -z "$pk_col" ]
+    then
+        echo "primary key column '$pk_name' is not found in table "
+    fi
+
+    while true
+    do
+
+    read -r -p "enter the primary key value to delete: " id_to_delete
+
+    found=$(awk -F':' -v col="$pk_col" -v val="$id_to_delete" 'NR > 1 && $col == val { found=1 } END { print found }' "$table_name")
+
+    if [ "$found" != "1" ]
+    then
+        echo "no row found with primary key '$id_to_delete' in table"
+        continue
+    else
+        break    
+    fi
+    done
+
+    # Delete matching row by PK column (keep header)
+    temp_file=$(mktemp)
+    awk -F':' -v pkcol="$pk_col" -v id="$id_to_delete" 'NR==1 || $pkcol != id' "$table_name" > "$temp_file" && mv "$temp_file" "$table_name"
+
+    echo "row with primary key $pk_name = '$id_to_delete' deleted successfully"
+    ;;
+    
+2 )
+            head -n 1 "$table_name" > temp_file && mv temp_file "$table_name"
+            echo "all rows deleted except header"
+            break
+            ;;
+
+3)
+    echo "exit from delete"
+    break
+    ;;
+*)
+    echo "invalid option "
+    ;;
+    esac
 done
 
-# Delete matching row by PK column (keep header)
-temp_file=$(mktemp)
-awk -F':' -v pkcol="$pk_col" -v id="$id_to_delete" 'NR==1 || $pkcol != id' "$table_name" > "$temp_file" && mv "$temp_file" "$table_name"
+    cd ..; cd ..
 
-echo "row where primary key $pk_name = '$id_to_delete' deleted successfully"
-
-cd ..; cd ..
-
- #  this comment is last thing        
+ #  this comment is last thing          
