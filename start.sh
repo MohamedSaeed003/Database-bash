@@ -3,6 +3,7 @@
 print_separator() {
     echo "----------------------------------"
 }
+clear
 
 PS3="Please select an option: "
 echo "Welcome to the Database Management System"
