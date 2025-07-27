@@ -13,7 +13,7 @@ A complete database management system implemented entirely in Bash scripting. Th
 - [Data Operations](#data-operations)
 - [Technical Details](#technical-details)
 
-## ✨ Features
+## Features
 
 ### Database Management
 - ✅ Create new databases
@@ -39,7 +39,7 @@ A complete database management system implemented entirely in Bash scripting. Th
 - 🔍 **Data Type Validation**: Ensure data integrity
 - 🔍 **User-friendly Interface**: Interactive column selection
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 Database-bash/
@@ -61,7 +61,7 @@ Database-bash/
         └── .table_file.meta_data  # Column metadata
 ```
 
-## 🚀 Installation
+## Installation
 
 1. **Clone the repository:**
    ```bash
@@ -79,7 +79,7 @@ Database-bash/
    ./start.sh
    ```
 
-## 💻 Usage
+## Usage
 
 ### Starting the Application
 ```bash
@@ -108,7 +108,7 @@ Select option 4 and enter your database name. Once connected, you'll see:
 8) Press 8 to Exit
 ```
 
-## 🗃️ Database Operations
+## Database Operations
 
 ### Create Database
 - Creates a new database directory
@@ -123,7 +123,7 @@ Select option 4 and enter your database name. Once connected, you'll see:
 - Safely deletes database and all contents
 - Confirms deletion before proceeding
 
-## 📊 Table Operations
+## Table Operations
 
 ### Create Table
 - Define custom column names and data types
@@ -134,7 +134,7 @@ Select option 4 and enter your database name. Once connected, you'll see:
 ### Example Table Creation:
 ![alt text](Screenshoots/image.png) ![alt text](Screenshoots/image-1.png)
 
-## 📝 Data Operations
+## Data Operations
 
 ### INSERT Data
 - Interactive data entry with validation
@@ -160,7 +160,7 @@ Select option 4 and enter your database name. Once connected, you'll see:
 ### DELETE Data
 - Remove records based on conditions
 
-## 🔧 Technical Details
+## Technical Details
 
 ### Data Storage Format
 - **Table Files**: Colon-separated values (CSV-like with `:`)
