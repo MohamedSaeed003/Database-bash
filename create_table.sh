@@ -9,20 +9,20 @@ while true
 do
 
 read -r -p "enter your table name: " table_name
-
+table_name="${table_name,,}"  # Convert to lowercase
 if [ -z "$table_name" ]             
 then
     echo "invalid table name to be empty "
     continue
 
-elif [[ "$table_name" == *"/"* || "$table_name" == *'\'* ]]  
+elif [[ "$table_name" == *"/"* || "$table_name" == *'\'* || "$table_name" == *"-"* ]]  
 then
-    echo "invalid table name cannot contain '/' or '\' use _ & - instead "
+    echo "invalid table name cannot contain '/' or '\' or '-' use _ instead "
     continue
 
 elif  echo "$table_name" | grep -qE '[_-]{2,}'  
 then
-    echo "invalid table name contain 2 or more consecutive of _ & -" 
+    echo "invalid table name contain 2 or more consecutive of _ " 
     continue
 
 elif [ -f "$table_name" ]
@@ -30,9 +30,9 @@ then
     echo "table named '$table_name' already exists " 
     continue
 
-elif [[ "$table_name" =~ ^[0-9]+$ ]]
+elif [[ "$table_name" =~ ^[0-9] ]]
 then
-    echo "invalid table name cannot be only numbers "        
+    echo "invalid table name cannot start with numbers "        
     continue
 
 elif ! [[ "$table_name" =~ [a-zA-Z] ]]
@@ -42,7 +42,7 @@ then
 
 elif [[ "$table_name" =~ [^a-zA-Z0-9_-] ]]
 then
-    echo "avoid using spaces & special characters use letters, numbers, _ & - only "
+    echo "avoid using spaces & special characters use letters, numbers, _ only "
     continue
 
 else
@@ -103,15 +103,16 @@ do
     do
 
     read -r -p "enter column $i name: " col_name
+col_name="${col_name,,}"  # Convert to lowercase
 
 if [ -z "$col_name" ]             
 then
     echo "invalid column name to be empty "
     continue
 
-elif [[ "$col_name" == *"/"* || "$col_name" == *'\'* ]]  
+elif [[ "$col_name" == *"/"* || "$col_name" == *'\'* || "$col_name" == *"-"* ]]  
 then
-    echo "invalid column name cannot contain '/' or '\' use _ & - instead "
+    echo "invalid column name cannot contain '/' or '\' or '-' use _ instead "
     continue
 
 elif  echo "$col_name" | grep -qE '[_-]{2,}'  
@@ -124,9 +125,9 @@ then
     echo "table column '$col_name' already exists "
     continue
 
-elif [[ "$col_name" =~ ^[0-9]+$ ]]
+elif [[ "$col_name" =~ ^[0-9] ]]
 then
-    echo "invalid column name cannot be only numbers "        
+    echo "invalid column name cannot start with numbers "        
     continue
 
 elif ! [[ "$col_name" =~ [a-zA-Z] ]]
@@ -136,7 +137,7 @@ then
 
 elif [[ "$col_name" =~ [^a-zA-Z0-9_-] ]]
 then
-    echo "avoid using spaces & special characters use letters, numbers, _ & - only "
+    echo "avoid using spaces & special characters use letters, numbers, _ only "
     continue
 
 else
@@ -178,7 +179,6 @@ done
 
             read -r -p "is column '$col_name' the primary key ? (yes/no)  " is_pk
             is_pk_lower=$(echo "$is_pk" | tr '[:upper:]' '[:lower:]')  # tr to normalize input
-
             if [[ "$is_pk_lower" == "yes" || "$is_pk_lower" == "y" ]]
             then
                 pk="PK"
@@ -216,8 +216,8 @@ then
 fi
 
 echo "$columns_line" > "$table_name"
-echo "table '$table_name' has been created successfully with primary key '$table_name' "
+echo "table '$table_name' has been created successfully "
 cd ..; cd ..
 
 
- #  this comment is last thing        
+ #  this comment is last thing           
