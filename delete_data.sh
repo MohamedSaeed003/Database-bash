@@ -1,5 +1,14 @@
 #!/usr/bin/bash
 
+print_d_option(){
+    echo "1) delete by primary key"
+    echo "2) delete all rows except header"
+    echo "3) exit"
+}
+print_separator(){
+    echo "----------------------------------"
+}
+
 cd Databases/"$db_name"
 
 while true
@@ -65,11 +74,17 @@ do
     awk -F':' -v pkcol="$pk_col" -v id="$id_to_delete" 'NR==1 || $pkcol != id' "$table_name" > "$temp_file" && mv "$temp_file" "$table_name"
 
     echo "row with primary key $pk_name = '$id_to_delete' deleted successfully"
+    print_separator
+    print_d_option
+    print_separator
     ;;
     
 2 )
             head -n 1 "$table_name" > temp_file && mv temp_file "$table_name"
             echo "all rows deleted except header"
+            print_separator
+            print_d_option
+            print_separator
             break
             ;;
 

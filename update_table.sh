@@ -1,5 +1,14 @@
 #!/usr/bin/bash
 
+print_u_options(){
+    echo "1) update by primary key"
+    echo "2) update all similar values in one column"
+    echo "3) exit"
+}
+print_separator(){
+    echo "----------------------------------"
+}
+
 cd Databases/"$db_name"
 
 while true
@@ -121,6 +130,9 @@ do
             echo "row which $pk_name = '$pk_value' updated successfully"
             break
         done
+        print_separator
+        print_u_options
+        print_separator
         ;;
 
     2 )
@@ -192,6 +204,9 @@ do
             echo "all rows where '$match_column' = '$old_value' updated to '$new_value' successfully."
             break
         done
+        print_separator
+        print_u_options
+        print_separator
         ;;
 
     3 )

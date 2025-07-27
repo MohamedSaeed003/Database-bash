@@ -4,12 +4,17 @@ cd Databases/$db_name
 
 #----------------------------start check table name ------------------------------------------------------
 table_names_check=()  # Array to store table names
+for file in *; do
+    if [[ -f "$file" && ! "$file" == *".meta_data" ]]; then
+        table_names_check+=("$file")
+    fi
+done
 
 while true
 do
 
 read -r -p "enter your table name: " table_name
-table_name="${table_name,,}"  # Convert to lowercase
+#table_name="${table_name,,}"  # Convert to lowercase
 if [ -z "$table_name" ]             
 then
     echo "invalid table name to be empty "
@@ -25,7 +30,7 @@ then
     echo "invalid table name contain 2 or more consecutive of _ " 
     continue
 
-elif [ -f "$table_name" ]
+elif [[ " ${table_names_check[@],,} " =~ "${table_name,,}" ]]
 then
     echo "table named '$table_name' already exists " 
     continue
@@ -47,7 +52,6 @@ then
 
 else
         echo "valid table name  $table_name "
-        table_names_check+=("$table_name")
 
         break
 
@@ -103,7 +107,7 @@ do
     do
 
     read -r -p "enter column $i name: " col_name
-col_name="${col_name,,}"  # Convert to lowercase
+#col_name="${col_name,,}"  # Convert to lowercase
 
 if [ -z "$col_name" ]             
 then
@@ -120,7 +124,7 @@ then
     echo "invalid column name contain 2 or more consecutive of _ & -" 
     continue
 
-elif [[ " ${column_names_check[@]} " =~ " $col_name " ]]            
+elif [[ " ${column_names_check[@],,} " =~ "${col_name,,}" ]]            
 then
     echo "table column '$col_name' already exists "
     continue
