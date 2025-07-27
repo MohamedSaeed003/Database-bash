@@ -132,7 +132,7 @@ Select option 4 and enter your database name. Once connected, you'll see:
 - Input validation for table structure
 
 ### Example Table Creation:
-![alt text](image.png) ![alt text](image-1.png)
+![alt text](Screenshoots/image.png) ![alt text](Screenshoots/image-1.png)
 
 ## 📝 Data Operations
 
@@ -150,7 +150,7 @@ Select option 4 and enter your database name. Once connected, you'll see:
 - **Smart Column Display**: Shows only selected columns in results
 
 ### SELECT Examples:
-![alt text](image-2.png) ![alt text](image-6.png)
+![alt text](Screenshoots/image-2.png) ![alt text](Screenshoots/image-6.png)
 
 ### UPDATE Data
 - Modify existing records
