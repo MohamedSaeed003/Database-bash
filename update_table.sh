@@ -18,8 +18,16 @@ do
     then
         echo "table named '$table_name' is exist "
         break
+
+        elif [[ "$table_name" == '0' ]]
+        then
+        echo "exit create table"
+        cd ..;cd ..
+        exec ./start.sh
+
     else
         echo "table named '$table_name' is not exist "
+                                    echo "enter 0 to exit create table "
         continue
     fi
 done
