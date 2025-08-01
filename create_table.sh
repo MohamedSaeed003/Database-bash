@@ -13,49 +13,61 @@ done
 while true
 do
 
-read -r -p "enter your table name: " table_name
-#table_name="${table_name,,}"  # Convert to lowercase
-if [ -z "$table_name" ]             
-then
-    echo "invalid table name to be empty "
-    continue
+        read -r -p "enter your table name: " table_name
+        #table_name="${table_name,,}"  # Convert to lowercase
+        if [ -z "$table_name" ]             
+        then
+            echo "invalid table name to be empty "
+                echo "enter 0 to exit create table "
+            continue
 
-elif [[ "$table_name" == *"/"* || "$table_name" == *'\'* || "$table_name" == *"-"* ]]  
-then
-    echo "invalid table name cannot contain '/' or '\' or '-' use _ instead "
-    continue
+        elif [[ "$table_name" == '0' ]]
+        then
+        echo "exit create table"
+        cd ..;cd ..
+        exec ./start.sh
 
-elif  echo "$table_name" | grep -qE '[_-]{2,}'  
-then
-    echo "invalid table name contain 2 or more consecutive of _ " 
-    continue
+        elif [[ "$table_name" == *"/"* || "$table_name" == *'\'* || "$table_name" == *"-"* ]]  
+        then
+            echo "invalid table name cannot contain '/' or '\' or '-' use _ instead "
+                            echo "enter 0 to exit create table "
+            continue
 
-elif [[ " ${table_names_check[@],,} " =~ "${table_name,,}" ]]
-then
-    echo "table named '$table_name' already exists " 
-    continue
+        elif  echo "$table_name" | grep -qE '[_-]{2,}'  
+        then
+            echo "invalid table name contain 2 or more consecutive of _ " 
+                            echo "enter 0 to exit create table "
+            continue
 
-elif [[ "$table_name" =~ ^[0-9] ]]
-then
-    echo "invalid table name cannot start with numbers "        
-    continue
+        elif [[ " ${table_names_check[@],,} " =~ "${table_name,,}" ]]
+        then
+            echo "table named '$table_name' already exists " 
+                            echo "enter 0 to exit create table "
+            continue
 
-elif ! [[ "$table_name" =~ [a-zA-Z] ]]
-then
-    echo "invalid table name must contain at least letter "  
-    continue
+        elif [[ "$table_name" =~ ^[0-9] ]]
+        then
+            echo "invalid table name cannot start with numbers "      
+                            echo "enter 0 to exit create table "  
+            continue
 
-elif [[ "$table_name" =~ [^a-zA-Z0-9_-] ]]
-then
-    echo "avoid using spaces & special characters use letters, numbers, _ only "
-    continue
+        elif ! [[ "$table_name" =~ [a-zA-Z] ]]
+        then
+            echo "invalid table name must contain at least letter "  
+                            echo "enter 0 to exit create table "
+            continue
 
-else
-        echo "valid table name  $table_name "
+        elif [[ "$table_name" =~ [^a-zA-Z0-9_-] ]]
+        then
+            echo "avoid using spaces & special characters use letters, numbers, _ only "
+                            echo "enter 0 to exit create table "
+            continue
 
-        break
+        else
+                echo "valid table name  $table_name "
+                break
 
-fi
+        fi
 done
 #----------------------------end check table name ------------------------------------------------------
 
