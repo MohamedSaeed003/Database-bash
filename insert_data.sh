@@ -53,15 +53,12 @@ if [ -f "$table_name" ]; then
                     fi
                 fi
             elif [[ "$col_type" == "string" ]]; then
-                if [[ "$value" =~ ^[a-zA-Z0-9_" "]+$ ]]; then
+                if [[ "$value" == *:* ]]; then
+                    echo "Invalid input. String values cannot contain colons."
+                else
                     row_values[$i]="$value"
                     break
-                else
-                    echo "Invalid input. Please enter a valid string (letters, numbers, spaces, underscores)."
                 fi
-            else
-                row_values[$i]="$value"
-                break
             fi
         done
     done
